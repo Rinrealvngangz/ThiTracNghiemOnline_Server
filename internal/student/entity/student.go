@@ -17,7 +17,8 @@ type Student struct {
 	isDeleted   int
 }
 
-func TestCaseFindByStudent(student *Student) Student {
+func TestCaseFindByStudent() *Student {
+	var student Student
 	student.idStudent = uuid.New().String()
 	student.fullName = "Nguyen Mau Tuan"
 	student.createdAt = time.Now().Local()
@@ -25,5 +26,5 @@ func TestCaseFindByStudent(student *Student) Student {
 	student.email = "tuan@gmail.com"
 	student.phoneNumber = "0949239777"
 	student.password = "string"
-	return *student
+	return &student
 }
