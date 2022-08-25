@@ -7,24 +7,24 @@ import (
 )
 
 type Student struct {
-	idStudent   string `gorm:"primaryKey;"`
-	fullName    string `gorm:"type:varchar(255);unique;not null"` // tên thi sinh
-	phoneNumber string `gorm:"type:varchar(255);null"`            // sdt
-	email       string `gorm:"type:varchar(255);null"`            // loại đề
-	password    string `gorm:"type:varchar(255);not null"`
-	createdAt   time.Time
-	updatedAt   time.Time
-	isDeleted   int
+	IdStudent   string `gorm:"primaryKey;"`
+	FullName    string `gorm:"type:varchar(255);unique;not null"` // tên thi sinh
+	PhoneNumber string `gorm:"type:varchar(255);null"`            // sdt
+	Email       string `gorm:"type:varchar(255);null"`            // loại đề
+	Password    string `gorm:"type:varchar(255);not null"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	IsDeleted   int
 }
 
 func TestCaseFindByStudent() *Student {
 	var student Student
-	student.idStudent = uuid.New().String()
-	student.fullName = "Nguyen Mau Tuan"
-	student.createdAt = time.Now().Local()
-	student.updatedAt = time.Now().Local()
-	student.email = "tuan@gmail.com"
-	student.phoneNumber = "0949239777"
-	student.password = "string"
+	student.IdStudent = uuid.New().String()
+	student.FullName = "Nguyen Mau Tuan"
+	student.CreatedAt = time.Now().Local()
+	student.UpdatedAt = time.Now().Local()
+	student.Email = "tuan@gmail.com"
+	student.PhoneNumber = "0949239777"
+	student.Password = "string"
 	return &student
 }
