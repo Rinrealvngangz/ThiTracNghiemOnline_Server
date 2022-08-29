@@ -10,7 +10,7 @@ import (
 func (s *Server) MapHandlers(r gin.Engine) error {
 
 	// repos
-	studentRepository := repository.NewStudenRepository()
+	studentRepository := repository.NewStudenRepository(s.db)
 
 	studentUseCase := usecase.NewStudentUseCase(studentRepository)
 	//handler

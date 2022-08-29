@@ -1,7 +1,10 @@
 package student
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type Handler interface {
 	GetStudent() gin.HandlerFunc
+	InsertStudent(ctx *gin.Context)
 }
