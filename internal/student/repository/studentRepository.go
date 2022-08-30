@@ -18,9 +18,10 @@ func NewStudenRepository(db *gorm.DB) student.StudentRepository {
 }
 
 // FindById implements student.StudentRepository
-func (studentRepository) FindById(id int) *entity.Student {
-	student := entity.TestCaseFindByStudent()
-	return student
+func (std *studentRepository) FindById(ctx context.Context, id string) (*entity.Student, error) {
+	student := entity.Student{IdStudent: id}
+	result := std.db.WithContext(ctx).First(&student)
+	return &student, result.Error
 }
 
 func (std *studentRepository) Insert(ctx context.Context, studentRequest presenter.StudentRequest) error {

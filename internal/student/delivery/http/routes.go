@@ -7,6 +7,6 @@ import (
 
 // Map auth routes
 func MapAuthRoutes(router gin.RouterGroup, h student.Handler) {
-	router.GET("/", h.GetStudent())
+	router.GET("/:id", h.GetStudentById)
 	router.POST("/insert", h.InsertStudent)
 }

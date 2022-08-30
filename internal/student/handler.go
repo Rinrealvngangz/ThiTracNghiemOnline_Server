@@ -5,6 +5,6 @@ import (
 )
 
 type Handler interface {
-	GetStudent() gin.HandlerFunc
+	GetStudentById(ctx *gin.Context)
 	InsertStudent(ctx *gin.Context)
 }

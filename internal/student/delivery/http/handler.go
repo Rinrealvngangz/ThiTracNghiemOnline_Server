@@ -17,31 +17,24 @@ type studentHandler struct {
 	logger    logging.Logger
 }
 
-type Responses struct {
-	StatusCode int         `json:"statusCode"`
-	Method     string      `json:"method"`
-	Message    string      `json:"message"`
-	Data       interface{} `json:"data"`
-}
-
 func NewStudentHandler(studentUC student.StudentCase) *studentHandler {
 	return &studentHandler{studentUC: studentUC, logger: *util.Gologger()}
 }
 
 // GetUser implements student.Handler
-func (std *studentHandler) GetStudent() gin.HandlerFunc {
+func (std *studentHandler) GetStudentById(ctx *gin.Context) {
+	idStudent := ctx.Param("id")
+	//idStudent := uuid.Must(uuid.FromString(paramId))
 
-	return func(c *gin.Context) {
-		var idStudent int = 1
-		student := std.studentUC.FindById(idStudent)
-		jsonResponse := Responses{
-			StatusCode: http.StatusOK,
-			Method:     http.MethodGet,
-			Message:    "Success",
-			Data:       student,
-		}
-		c.JSON(http.StatusOK, jsonResponse)
+	student, err := std.studentUC.FindById(ctx, idStudent)
+	std.logger.Info(student)
+	if err != nil {
+		std.logger.Error("Cannot find student: "+idStudent, student)
+		util.APIResponse(ctx, "Find studentById  failed", http.StatusInternalServerError, http.MethodGet, nil, modulesName)
+	} else {
+		util.APIResponse(ctx, "Find student success", http.StatusOK, http.MethodGet, student, modulesName)
 	}
+
 }
 
 func (std *studentHandler) InsertStudent(ctx *gin.Context) {

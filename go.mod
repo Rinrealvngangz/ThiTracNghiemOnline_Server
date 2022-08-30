@@ -34,6 +34,7 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.3 // indirect
 	github.com/restuwahyu13/go-playground-converter v0.0.6 // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/thedevsaddam/govalidator v1.9.10 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
