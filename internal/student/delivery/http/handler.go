@@ -21,15 +21,21 @@ func NewStudentHandler(studentUC student.StudentCase) *studentHandler {
 	return &studentHandler{studentUC: studentUC, logger: *util.Gologger()}
 }
 
-// GetUser implements student.Handler
+func (std *studentHandler) GetStudents(ctx *gin.Context) {
+	studentFind := &presenter.StudentFindRequest{}
+	ctx.ShouldBindJSON(&studentFind)
+	students := std.studentUC.Find(ctx, *studentFind)
+	util.APIResponse(ctx, "Find All students success", http.StatusCreated, http.MethodPost, students, modulesName)
+}
+
 func (std *studentHandler) GetStudentById(ctx *gin.Context) {
 	idStudent := ctx.Param("id")
 	student, err := std.studentUC.FindById(ctx, idStudent)
 	if err != nil {
-		std.logger.Error("Cannot find student: "+idStudent, student)
-		util.APIResponse(ctx, "Find studentById  failed", http.StatusInternalServerError, http.MethodGet, nil, modulesName)
+		std.logger.Error("Cannot FindById student: "+idStudent, student)
+		util.APIResponse(ctx, "FindById studentById  failed", http.StatusInternalServerError, http.MethodGet, nil, modulesName)
 	} else {
-		util.APIResponse(ctx, "Find student success", http.StatusOK, http.MethodGet, student, modulesName)
+		util.APIResponse(ctx, "FindById student success", http.StatusOK, http.MethodGet, student, modulesName)
 	}
 
 }
@@ -54,7 +60,7 @@ func (std *studentHandler) InsertStudent(ctx *gin.Context) {
 }
 
 func (std *studentHandler) UpdateStudentById(ctx *gin.Context) {
-	student := &presenter.StudentRequest{}
+	student := &presenter.StudentUpdateRequest{}
 	ctx.ShouldBindJSON(&student)
 	idStudent := ctx.Param("id")
 	result := std.studentUC.UpdateById(ctx, idStudent, *student)

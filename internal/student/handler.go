@@ -5,6 +5,7 @@ import (
 )
 
 type Handler interface {
+	GetStudents(ctx *gin.Context)
 	GetStudentById(ctx *gin.Context)
 	InsertStudent(ctx *gin.Context)
 	UpdateStudentById(ctx *gin.Context)
