@@ -24,10 +24,7 @@ func NewStudentHandler(studentUC student.StudentCase) *studentHandler {
 // GetUser implements student.Handler
 func (std *studentHandler) GetStudentById(ctx *gin.Context) {
 	idStudent := ctx.Param("id")
-	//idStudent := uuid.Must(uuid.FromString(paramId))
-
 	student, err := std.studentUC.FindById(ctx, idStudent)
-	std.logger.Info(student)
 	if err != nil {
 		std.logger.Error("Cannot find student: "+idStudent, student)
 		util.APIResponse(ctx, "Find studentById  failed", http.StatusInternalServerError, http.MethodGet, nil, modulesName)
@@ -53,5 +50,29 @@ func (std *studentHandler) InsertStudent(ctx *gin.Context) {
 			util.APIResponse(ctx, "Create student success", http.StatusCreated, http.MethodPost, nil, modulesName)
 		}
 
+	}
+}
+
+func (std *studentHandler) UpdateStudentById(ctx *gin.Context) {
+	student := &presenter.StudentRequest{}
+	ctx.ShouldBindJSON(&student)
+	idStudent := ctx.Param("id")
+	result := std.studentUC.UpdateById(ctx, idStudent, *student)
+	if result != nil {
+		std.logger.Error("Cannot update student:", result)
+		util.APIResponse(ctx, "Update student account failed", http.StatusInternalServerError, http.MethodPut, nil, modulesName)
+	} else {
+		util.APIResponse(ctx, "Update student success", http.StatusCreated, http.MethodPut, nil, modulesName)
+	}
+}
+
+func (std *studentHandler) DeleteStudentById(ctx *gin.Context) {
+	idStudent := ctx.Param("id")
+	result := std.studentUC.DeleteById(ctx, idStudent)
+	if result != nil {
+		std.logger.Error("Cannot delete student:", result)
+		util.APIResponse(ctx, "Delete student account failed", http.StatusInternalServerError, http.MethodDelete, nil, modulesName)
+	} else {
+		util.APIResponse(ctx, "Delete student success", http.StatusCreated, http.MethodDelete, nil, modulesName)
 	}
 }

@@ -17,10 +17,9 @@ func NewStudenRepository(db *gorm.DB) student.StudentRepository {
 	return &studentRepository{db: db}
 }
 
-// FindById implements student.StudentRepository
 func (std *studentRepository) FindById(ctx context.Context, id string) (*entity.Student, error) {
 	student := entity.Student{IdStudent: id}
-	result := std.db.WithContext(ctx).First(&student)
+	result := std.db.WithContext(ctx).Where("is_deleted != 1").First(&student)
 	return &student, result.Error
 }
 
@@ -36,4 +35,27 @@ func (std *studentRepository) Insert(ctx context.Context, studentRequest present
 		return result.Error
 	}
 	return nil
+}
+
+func (std *studentRepository) UpdateById(ctx context.Context, id string, studentRequest presenter.StudentRequest) error {
+	student := entity.Student{IdStudent: id}
+	studentExist := std.db.WithContext(ctx).First(&student)
+	if studentExist.Error != nil {
+		return studentExist.Error
+	} else {
+		std.db.Model(&student).Updates(studentRequest)
+		return nil
+	}
+}
+
+// DeleteById implements student.StudentRepository
+func (std *studentRepository) DeleteById(ctx context.Context, id string) error {
+	student := entity.Student{IdStudent: id}
+	studentExist := std.db.WithContext(ctx).First(&student)
+	if studentExist.Error != nil {
+		return studentExist.Error
+	} else {
+		std.db.Model(&student).Where("id_student = ?", id).Update("is_deleted", 1)
+		return nil
+	}
 }
