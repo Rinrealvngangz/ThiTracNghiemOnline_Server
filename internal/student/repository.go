@@ -15,4 +15,5 @@ type StudentRepository interface {
 	Insert(ctx context.Context, studentRequest presenter.StudentRequest) error
 	UpdateById(ctx context.Context, id string, studentRequest presenter.StudentUpdateRequest) error
 	DeleteById(ctx context.Context, id string) error
+	LoginByPhone(ctx context.Context, phoneNumber string, password string) (*presenter.StudentResponse, error)
 }

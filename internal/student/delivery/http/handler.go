@@ -33,7 +33,7 @@ func (std *studentHandler) GetStudentById(ctx *gin.Context) {
 	student, err := std.studentUC.FindById(ctx, idStudent)
 	if err != nil {
 		std.logger.Error("Cannot FindById student: "+idStudent, student)
-		util.APIResponse(ctx, "FindById studentById  failed", http.StatusInternalServerError, http.MethodGet, nil, modulesName)
+		util.APIResponse(ctx, "FindById studentById  failed", http.StatusNotFound, http.MethodGet, nil, modulesName)
 	} else {
 		util.APIResponse(ctx, "FindById student success", http.StatusOK, http.MethodGet, student, modulesName)
 	}
@@ -43,11 +43,11 @@ func (std *studentHandler) GetStudentById(ctx *gin.Context) {
 func (std *studentHandler) InsertStudent(ctx *gin.Context) {
 	student := &presenter.StudentRequest{}
 	ctx.ShouldBindJSON(&student)
-	resutl, err := util.GoValidator(student)
+	result, err := util.GoValidatorInsert(student)
 	if err != nil {
 		util.ValidatorErrorResponse(ctx, http.StatusBadRequest, http.MethodPost, err.Error(), modulesName)
 	}
-	if resutl == true {
+	if result == true {
 		result := std.studentUC.Insert(ctx, *student)
 		if result != nil {
 			std.logger.Error("Cannot insert student:", result)
@@ -81,4 +81,23 @@ func (std *studentHandler) DeleteStudentById(ctx *gin.Context) {
 	} else {
 		util.APIResponse(ctx, "Delete student success", http.StatusCreated, http.MethodDelete, nil, modulesName)
 	}
+}
+
+func (std *studentHandler) LoginByPhone(ctx *gin.Context) {
+	student := presenter.StudentLoginRequest{}
+	ctx.ShouldBindJSON(&student)
+	valid, err := util.GoValidatorLogin(&student)
+	if err != nil {
+		util.ValidatorErrorResponse(ctx, http.StatusBadRequest, http.MethodPost, err.Error(), modulesName)
+	}
+	if valid == true {
+		result, err := std.studentUC.LoginByPhone(ctx, student.PhoneNumber, student.Password)
+		if err != nil {
+			std.logger.Error("Cannot login student:", err)
+			util.APIResponse(ctx, err.Error(), http.StatusNotFound, http.MethodPost, nil, modulesName)
+		} else {
+			util.APIResponse(ctx, "login student success", http.StatusOK, http.MethodPost, result, modulesName)
+		}
+	}
+
 }

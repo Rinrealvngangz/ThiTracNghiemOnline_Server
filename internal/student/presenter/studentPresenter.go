@@ -1,12 +1,10 @@
 package presenter
 
-import "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student/entity"
-
 type StudentResponse struct {
 	IdStudent   string
+	FullName    string
 	Email       string
 	PhoneNumber string
-	Password    string
 }
 
 type StudentRequest struct {
@@ -22,6 +20,11 @@ type StudentUpdateRequest struct {
 	PhoneNumber string `json:"phoneNumber" valid:"required~PhoneNumber is required,,type(string)"`
 }
 
+type StudentLoginRequest struct {
+	PhoneNumber string `json:"phoneNumber" valid:"required~PhoneNumber is required,,type(string)"`
+	Password    string `json:"password" valid:"required"`
+}
+
 type StudentFindRequest struct {
 	SearchText string `json:"searchText"`
 	Limit      int    `json:"limit"`
@@ -29,6 +32,6 @@ type StudentFindRequest struct {
 }
 
 type StudentFindResponse struct {
-	Students *[]entity.Student `json:"students"`
-	Count    int               `json:"count"`
+	Students *[]StudentResponse `json:"students"`
+	Count    int                `json:"count"`
 }

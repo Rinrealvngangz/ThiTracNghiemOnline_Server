@@ -13,7 +13,7 @@ func main() {
 	db := db.GetPostgresInstance(cfg, false)
 
 	logger.Info("Starting api server")
-	s := server.NewServer(db)
+	s := server.NewServer(db, cfg.Port)
 	if err := s.Run(); err != nil {
 		logger.Fatal(err)
 	}

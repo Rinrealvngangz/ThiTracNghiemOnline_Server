@@ -37,3 +37,7 @@ func (std studentUseCase) DeleteById(ctx context.Context, id string) error {
 func (std studentUseCase) Find(ctx context.Context, studentFindRequest presenter.StudentFindRequest) *presenter.StudentFindResponse {
 	return std.studentRepo.Find(ctx, studentFindRequest)
 }
+
+func (std studentUseCase) LoginByPhone(ctx context.Context, phoneNumber string, password string) (*presenter.StudentResponse, error) {
+	return std.studentRepo.LoginByPhone(ctx, phoneNumber, password)
+}

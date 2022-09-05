@@ -5,7 +5,12 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-func GoValidator(studentRequest *presenter.StudentRequest) (bool, error) {
+func GoValidatorInsert(studentRequest *presenter.StudentRequest) (bool, error) {
+	result, err := govalidator.ValidateStruct(studentRequest)
+	return result, err
+}
+
+func GoValidatorLogin(studentRequest *presenter.StudentLoginRequest) (bool, error) {
 	result, err := govalidator.ValidateStruct(studentRequest)
 	return result, err
 }

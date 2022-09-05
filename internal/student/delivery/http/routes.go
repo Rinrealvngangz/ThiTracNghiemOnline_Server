@@ -10,6 +10,8 @@ func MapAuthRoutes(router gin.RouterGroup, h student.Handler) {
 	router.POST("/find", h.GetStudents)
 	router.GET("/findById/:id", h.GetStudentById)
 	router.POST("/insert", h.InsertStudent)
+	router.POST("/register", h.InsertStudent)
 	router.PUT("/updateById/:id", h.UpdateStudentById)
 	router.DELETE("/deleteById/:id", h.DeleteStudentById)
+	router.POST("/loginByPhone", h.LoginByPhone)
 }

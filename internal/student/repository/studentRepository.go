@@ -2,10 +2,14 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
+
+	"errors"
 
 	student "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student"
 	entity "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student/entity"
 	presenter "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student/presenter"
+	util "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/utils"
 	"gorm.io/gorm"
 )
 
@@ -18,14 +22,15 @@ func NewStudenRepository(db *gorm.DB) student.StudentRepository {
 }
 
 func (std *studentRepository) Find(ctx context.Context, studentFindRequest presenter.StudentFindRequest) *presenter.StudentFindResponse {
-	students := []entity.Student{}
+
+	student := []entity.Student{}
+	studentResponse := []presenter.StudentResponse{}
 	queryBuilder := std.db.WithContext(ctx)
 	if studentFindRequest.SearchText != "" {
 		searchText := studentFindRequest.SearchText
 		queryBuilder = queryBuilder.Where("email = ?", searchText).
 			Or("phone_number = ?", searchText).
-			Or("full_name = ?", searchText).Find(&students)
-
+			Or("full_name = ?", searchText).Find(&student)
 	}
 	if studentFindRequest.Limit == 0 {
 		studentFindRequest.Limit = 10
@@ -34,10 +39,14 @@ func (std *studentRepository) Find(ctx context.Context, studentFindRequest prese
 		queryBuilder = queryBuilder.Offset(studentFindRequest.Offset)
 	}
 	queryBuilder = queryBuilder.Where("is_deleted != 1")
-	queryBuilder.Limit(studentFindRequest.Limit).Find(&students)
-	count := len(students)
+	queryBuilder.Limit(studentFindRequest.Limit).Find(&student)
+	count := len(student)
+
+	studentRecord, _ := json.Marshal(student)
+	json.Unmarshal([]byte(studentRecord), &studentResponse)
+
 	responseStudents := presenter.StudentFindResponse{
-		Students: &students,
+		Students: &studentResponse,
 		Count:    count,
 	}
 	return &responseStudents
@@ -54,7 +63,7 @@ func (std *studentRepository) Insert(ctx context.Context, studentRequest present
 	student.FullName = studentRequest.FullName
 	student.Email = studentRequest.Email
 	student.PhoneNumber = studentRequest.PhoneNumber
-	student.Password = studentRequest.Password
+	student.Password, _ = util.HashPassword(studentRequest.Password)
 	student.BeforeCreate()
 	result := std.db.WithContext(ctx).Create(&student)
 	if result.Error != nil {
@@ -74,7 +83,6 @@ func (std *studentRepository) UpdateById(ctx context.Context, id string, student
 	}
 }
 
-// DeleteById implements student.StudentRepository
 func (std *studentRepository) DeleteById(ctx context.Context, id string) error {
 	student := entity.Student{IdStudent: id}
 	studentExist := std.db.WithContext(ctx).First(&student)
@@ -83,5 +91,26 @@ func (std *studentRepository) DeleteById(ctx context.Context, id string) error {
 	} else {
 		std.db.Model(&student).Where("id_student = ?", id).Update("is_deleted", 1)
 		return nil
+	}
+}
+
+func (std *studentRepository) LoginByPhone(ctx context.Context, phoneNumber string, password string) (*presenter.StudentResponse, error) {
+	queryBuilder := std.db.WithContext(ctx).Where("is_deleted != 1").Where("phone_number = ?", phoneNumber)
+	student := entity.Student{}
+	studentResponse := presenter.StudentResponse{}
+	isExistStudent := queryBuilder.First(&student)
+
+	if isExistStudent.Error != nil {
+		return &studentResponse, errors.New("PhoneNumber is not exist")
+	} else {
+		match := util.CheckPasswordHash(password, student.Password)
+		if match == true {
+			result := queryBuilder.Where("password = ?", student.Password).First(&studentResponse)
+			if result.Error != nil {
+				return &studentResponse, result.Error
+			}
+			return &studentResponse, nil
+		}
+		return &studentResponse, errors.New("Password is not correct")
 	}
 }

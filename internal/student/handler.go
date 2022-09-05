@@ -10,4 +10,5 @@ type Handler interface {
 	InsertStudent(ctx *gin.Context)
 	UpdateStudentById(ctx *gin.Context)
 	DeleteStudentById(ctx *gin.Context)
+	LoginByPhone(ctx *gin.Context)
 }
