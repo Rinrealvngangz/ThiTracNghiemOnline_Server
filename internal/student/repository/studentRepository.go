@@ -63,7 +63,7 @@ func (std *studentRepository) Insert(ctx context.Context, studentRequest present
 	student.FullName = studentRequest.FullName
 	student.Email = studentRequest.Email
 	student.PhoneNumber = studentRequest.PhoneNumber
-	student.Password = studentRequest.Password
+	student.Password, _ = util.HashPassword(student.Password)
 	student.BeforeCreate()
 	result := std.db.WithContext(ctx).Create(&student)
 	if result.Error != nil {

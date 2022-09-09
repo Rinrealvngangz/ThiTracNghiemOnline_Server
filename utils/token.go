@@ -79,10 +79,10 @@ func ExtractTokenID(c *gin.Context) (string, error) {
 		claimNameId.staffClaimsId = "id_staff"
 		claimNameId.userClaimsId = "id_student"
 		if id, exists := claims[claimNameId.staffClaimsId]; exists {
-			result := fmt.Sprintf("%.0f", id)
+			result := fmt.Sprint(id)
 			return result, nil
 		} else if id, exists := claims[claimNameId.userClaimsId]; exists {
-			result := fmt.Sprintf("%.0f", id)
+			result := fmt.Sprint(id)
 			return result, nil
 		} else {
 			return "", err

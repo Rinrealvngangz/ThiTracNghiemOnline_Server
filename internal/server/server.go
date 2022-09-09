@@ -16,7 +16,7 @@ func NewServer(db *gorm.DB, port string) *Server {
 }
 
 func (s *Server) Run() error {
-	s.MapHandlers(*s.g)
+	s.MapHandlers(*s.g, *&s.db)
 	s.g.Run(":" + s.port)
 	return nil
 }

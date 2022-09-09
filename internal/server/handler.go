@@ -5,9 +5,10 @@ import (
 	repository "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student/repository"
 	usecase "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/internal/student/usecase"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func (s *Server) MapHandlers(r gin.Engine) error {
+func (s *Server) MapHandlers(r gin.Engine, db *gorm.DB) error {
 
 	// repos
 	studentRepository := repository.NewStudenRepository(s.db)
@@ -21,6 +22,6 @@ func (s *Server) MapHandlers(r gin.Engine) error {
 
 	studentGroup := v1.Group("/students")
 
-	http.MapAuthRoutes(*studentGroup, studentHandler)
+	http.MapAuthRoutes(*studentGroup, studentHandler, db)
 	return nil
 }

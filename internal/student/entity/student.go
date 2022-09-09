@@ -2,11 +2,8 @@ package entity
 
 import (
 	"time"
-
-	util "github.com/Rinrealvngangz/ThiTracNghiemOnline_Server/utils"
 	"github.com/google/uuid"
 )
-
 type Student struct {
 	IdStudent   string `gorm:"primaryKey;auto_increment;not_null"`
 	FullName    string `gorm:"type:varchar(255);not null"`
@@ -33,6 +30,5 @@ func TestCaseFindByStudent() *Student {
 func (student *Student) BeforeCreate() error {
 	student.IdStudent = uuid.New().String()
 	student.CreatedAt = time.Now().Local()
-	student.Password, _ = util.HashPassword(student.Password)
 	return nil
 }
