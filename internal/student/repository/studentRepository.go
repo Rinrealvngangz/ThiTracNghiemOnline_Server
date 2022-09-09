@@ -63,7 +63,7 @@ func (std *studentRepository) Insert(ctx context.Context, studentRequest present
 	student.FullName = studentRequest.FullName
 	student.Email = studentRequest.Email
 	student.PhoneNumber = studentRequest.PhoneNumber
-	student.Password, _ = util.HashPassword(studentRequest.Password)
+	student.Password = studentRequest.Password
 	student.BeforeCreate()
 	result := std.db.WithContext(ctx).Create(&student)
 	if result.Error != nil {
@@ -109,6 +109,11 @@ func (std *studentRepository) LoginByPhone(ctx context.Context, phoneNumber stri
 			if result.Error != nil {
 				return &studentResponse, result.Error
 			}
+			token, err := util.GenerateToken("id_student", studentResponse.IdStudent, student.FullName)
+			if err != nil {
+				return &studentResponse, errors.New("login user failed")
+			}
+			studentResponse.Token = token
 			return &studentResponse, nil
 		}
 		return &studentResponse, errors.New("Password is not correct")

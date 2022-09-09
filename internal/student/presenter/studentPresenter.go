@@ -5,6 +5,7 @@ type StudentResponse struct {
 	FullName    string
 	Email       string
 	PhoneNumber string
+	Token       string
 }
 
 type StudentRequest struct {
